@@ -37,6 +37,26 @@
             <div v-for="(company, i) in companiesForTheDay" :key="i">{{company}}</div>
           </div>
         </div>
+        <div v-else>
+          <div class="mt-4">
+            <label for="three" class="block font-bold">Choose date</label>
+            <label for="" class="block mb-1">Days with scheduled inspections are in grey</label>
+            <div style="display: grid; grid-template-columns: repeat(7, 1fr); grid-gap: 20px;">
+              <div  v-for="(day, i) in month"
+                    :key="i" class="py-4 px-2 cursor-pointer"
+                    :class="{ 'hover:bg-grey-light': day !== '',
+                              'selectedDay': i === selectedDay,
+                              'busyDay': i === busyDay1 || i === busyDay2 || i === busyDay3 || i === busyDay4 || i === busyDay5}"
+                              @click="selectTheDayForWizard(i)">{{day}}</div>
+            </div>
+          </div>
+          <div class="mt-8" v-if="inspectorsForTheDay.length > 0">
+            <label for="three" class="block mb-2 font-bold">Recommended inspectors:</label>
+            <div class="py-3 pl-2 cursor-pointer hover:bg-grey-lightest" :class="{'selectedDay': selectedRecommendation === i}" v-for="(inspector, i) in inspectorsForTheDay" :key="i" @click="selectedRecommendation = i">
+              {{inspector}}
+            </div>
+          </div>
+        </div>
         <!-- <input class="border-black border h-10 w-full px-3 mb-4" placeholder="First name" type="text" v-model="selectedItem.first_name">
         <input class="border-black border h-10 w-full px-3 mb-4" placeholder="Last name" type="text" v-model="selectedItem.last_name">
         <input class="border-black border h-10 w-full px-3 mb-4" placeholder="Company name" type="text" v-model="selectedItem.company_name">
@@ -61,7 +81,9 @@ export default {
       busyDay4: null,
       busyDay5: null,
       chosenInspector: 0,
-      companiesForTheDay: []
+      companiesForTheDay: [],
+      inspectorsForTheDay: [],
+      selectedRecommendation: null
     }
   },
   computed: {
@@ -99,11 +121,22 @@ export default {
       this.selectedDay = index
       this.selectCompaniesForTheDay()
     },
+    selectTheDayForWizard (index) {
+      this.selectedDay = index
+      this.selectInspectorsForTheDay()
+    },
     selectCompaniesForTheDay () {
       this.companiesForTheDay = []
       for (let i = 1; i < 5; i++) {
         let indexio = Math.floor(Math.random() * 10)
         this.companiesForTheDay.push(this.inspectors[this.chosenInspector].inspections[indexio].company)
+      }
+    },
+    selectInspectorsForTheDay () {
+      this.inspectorsForTheDay = []
+      for (let i = 1; i < 4; i++) {
+        let indexio = Math.floor(Math.random() * 12)
+        this.inspectorsForTheDay.push(this.inspectors[indexio].name)
       }
     }
   },
